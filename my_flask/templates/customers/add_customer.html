@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block contentA %}
+<div class="container w-50">
+    <form action="" method="POST">
+        {{form.hidden_tag()}}
+        <fieldset>
+            <legend class="border-bottom mb-4">New Customer</legend>
+            <div class="form-group">
+                {{form.first_name.label(class="form-control-label")}}
+                {% if form.first_name.errors %}
+                {{form.first_name(class="form-control form-control-lg is-invalid")}}
+                {% for error in form.first_name.errors %}
+                <span>{{error}}</span>
+                {% endfor %}
+                {% else %}
+                {{form.first_name(class="form-control form-control-lg")}}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{form.last_name.label(class="form-control-label")}}
+                {% if form.last_name.errors %}
+                {{form.last_name(class="form-control form-control-lg is-invalid")}}
+                {% for error in form.last_name.errors %}
+                <span>{{error}}</span>
+                {% endfor %}
+                {% else %}
+                {{form.last_name(class="form-control form-control-lg")}}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{form.status.label(class="form-control-label")}}
+                {% if form.status.errors %}
+                {{form.status(class="form-control form-control-lg is-invalid")}}
+                {% for error in form.status.errors %}
+                <span>{{error}}</span>
+                {% endfor %}
+                {% else %}
+                {{form.status(class="form-control form-control-lg", list="datalistOptions", id="exampleDataList",
+                placeholder="Type to search...")}}
+                <datalist id="datalistOptions">
+                    {% for status in statuses%}
+                    <option value={{ status }}>
+                        {% endfor %}
+
+                </datalist>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{form.company.label(class="form-control-label")}}
+                {% if form.company.errors %}
+                {{form.company(class="form-control form-control-lg is-invalid")}}
+                {% for error in form.company.errors %}
+                <span>{{error}}</span>
+                {% endfor %}
+                {% else %}
+                {{form.company(class="form-control form-control-lg")}}
+                {% endif %}
+            </div>
+            <div class="form-group">
+                {{form.email.label(class="form-control-label")}}
+                {% if form.email.errors %}
+                {{form.email(class="form-control form-control-lg is-invalid")}}
+                {% for error in form.email.errors %}
+                <span>{{error}}</span>
+                {% endfor %}
+                {% else %}
+                {{form.email(class="form-control form-control-lg")}}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form-group mt-4">
+            {{form.submit(class="btn btn-primary")}}
+        </div>
+    </form>
+</div>
+{% endblock contentA %}
