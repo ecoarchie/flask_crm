@@ -82,16 +82,23 @@ def account():
         )
         db.session.add(user_details)
         db.session.commit()
+        flash(f"Account info updated successfully", category="success")
         return redirect(url_for("users.account"))
+
     elif request.method == "GET":
-        form.first_name.data = current_user.details[-1].first_name
-        form.last_name.data = current_user.details[-1].last_name
+        print(current_user.username)
+        try:
+            form.first_name.data = current_user.details[-1].first_name
+            form.last_name.data = current_user.details[-1].last_name
+        except:
+            pass
+
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_url = url_for(
         "static", filename="profile_images/" + current_user.profile_image
     )
-    flash(f"Account info updated successfully", category="success")
+
     return render_template(
         "account.html",
         title="Account",

@@ -14,14 +14,10 @@ DB_USER = os.getenv("POSTGRES_USER")
 DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 
 
-app.config["SECRET_KEY"] = "mysecretkey"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config[
     "SQLALCHEMY_DATABASE_URI"
 ] = f"postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/flaskapp"
-
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-login_manager = LoginManager(app)
 
 
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
@@ -33,10 +29,17 @@ app.config["MAIL_PASSWORD"] = os.getenv("GMAIL_PASSWORD")
 
 mail = Mail(app)
 
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = "users.login"
+
 from my_flask.users.routes import users
 from my_flask.main.routes import main
 from my_flask.customers.routes import customers
+from my_flask.projects.routes import projects
 
 app.register_blueprint(users)
 app.register_blueprint(customers)
 app.register_blueprint(main)
+app.register_blueprint(projects)
