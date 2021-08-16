@@ -1,11 +1,11 @@
 from datetime import datetime
 
-from flask import redirect, url_for
+from flask import redirect, url_for, current_app
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy.orm import backref
 
-from my_flask import db, login_manager, app
+from my_flask import db, login_manager
 
 
 @login_manager.user_loader
@@ -15,7 +15,7 @@ def load_user(user_id):
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    return redirect(url_for("register"))
+    return redirect(url_for("users.register"))
 
 
 class User(db.Model, UserMixin):
@@ -30,12 +30,14 @@ class User(db.Model, UserMixin):
     details = db.relationship("UserDetails", backref="parent", lazy=True)
 
     def get_token(self, expires_sec=300):
-        serial = Serializer(secret_key=app.config["SECRET_KEY"], expires_in=expires_sec)
+        serial = Serializer(
+            secret_key=current_app.config["SECRET_KEY"], expires_in=expires_sec
+        )
         return serial.dumps({"user_id": self.id}).decode("utf-8")
 
     @staticmethod
     def verify_token(token):
-        serial = Serializer(secret_key=app.config["SECRET_KEY"])
+        serial = Serializer(secret_key=current_app.config["SECRET_KEY"])
         try:
             user_id = serial.loads(token)["user_id"]
         except:

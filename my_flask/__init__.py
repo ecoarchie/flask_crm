@@ -1,45 +1,41 @@
+from my_flask.errors.handlers import error_404
 from dotenv import load_dotenv
-import os
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
+from my_flask.config import Config
 
 load_dotenv()
 
-app = Flask(__name__)
 
-DB_USER = os.getenv("POSTGRES_USER")
-DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-
-
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-app.config[
-    "SQLALCHEMY_DATABASE_URI"
-] = f"postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/flaskapp"
-
-
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 587
-app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = os.getenv("GMAIL_USERNAME")
-app.config["MAIL_PASSWORD"] = os.getenv("GMAIL_PASSWORD")
-
-
-mail = Mail(app)
-
-db = SQLAlchemy(app)
-bcrypt = Bcrypt(app)
-login_manager = LoginManager(app)
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+login_manager = LoginManager()
 login_manager.login_view = "users.login"
+mail = Mail()
 
-from my_flask.users.routes import users
-from my_flask.main.routes import main
-from my_flask.customers.routes import customers
-from my_flask.projects.routes import projects
 
-app.register_blueprint(users)
-app.register_blueprint(customers)
-app.register_blueprint(main)
-app.register_blueprint(projects)
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    db.init_app(app)
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
+    mail.init_app(app)
+
+    from my_flask.users.routes import users
+    from my_flask.main.routes import main
+    from my_flask.customers.routes import customers
+    from my_flask.projects.routes import projects
+    from my_flask.errors.handlers import errors
+
+    app.register_blueprint(users)
+    app.register_blueprint(customers)
+    app.register_blueprint(main)
+    app.register_blueprint(projects)
+    app.register_blueprint(errors)
+
+    return app

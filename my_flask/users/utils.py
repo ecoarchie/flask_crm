@@ -1,13 +1,15 @@
 import os
 from PIL import Image
-from flask import url_for
+from flask import url_for, current_app
 from flask_mail import Message
-from my_flask import app, mail
+from my_flask import mail
 
 
 def save_account_image(image_file):
     image_name = image_file.filename
-    image_path = os.path.join(app.root_path, "static/profile_images", image_name)
+    image_path = os.path.join(
+        current_app.root_path, "static/profile_images", image_name
+    )
 
     # resize profile image using pillow module
     output_size = (125, 125)
