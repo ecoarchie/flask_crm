@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 from my_flask import bcrypt, db
-from my_flask.models import User, UserDetails
+from my_flask.models import Manager
 from my_flask.users.forms import (
     AccountUpdateForm,
     ChangePasswordForm,
@@ -24,15 +24,17 @@ def register():
         encrypted_password = bcrypt.generate_password_hash(form.password.data).decode(
             "utf-8"
         )
-        user = User(
-            username=form.username.data,
+        manager = Manager(
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
             email=form.email.data,
             password=encrypted_password,
         )
-        db.session.add(user)
+        db.session.add(manager)
         db.session.commit()
         flash(
-            f"Account created successfuly for {form.username.data}", category="success"
+            f"Account created successfuly for {form.first_name.data} {form.last_name.data}",
+            category="success",
         )
         return redirect(url_for("users.login"))
     return render_template("register.html", title="SignUp", form=form)
@@ -44,11 +46,11 @@ def login():
         return redirect(url_for("users.account"))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if form.email.data == user.email and bcrypt.check_password_hash(
-            user.password, form.password.data
+        manager = Manager.query.filter_by(email=form.email.data).first()
+        if form.email.data == manager.email and bcrypt.check_password_hash(
+            manager.password, form.password.data
         ):
-            login_user(user)
+            login_user(manager)
             flash(f"Entered successfully in {form.email.data}", category="success")
             return redirect(url_for("users.account"))
         else:
@@ -73,27 +75,22 @@ def account():
         if form.account_image.data:
             new_account_imagefile_name = save_account_image(form.account_image.data)
             current_user.profile_image = new_account_imagefile_name
-        current_user.username = form.username.data
         current_user.email = form.email.data
-        user_details = UserDetails(
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            user_id=current_user.id,
-        )
-        db.session.add(user_details)
+        current_user.first_name = form.first_name.data
+        current_user.last_name = form.last_name.data
+        # user_id = current_user.id
+        # db.session.add(user_details)
         db.session.commit()
         flash(f"Account info updated successfully", category="success")
         return redirect(url_for("users.account"))
 
     elif request.method == "GET":
-        print(current_user.username)
         try:
-            form.first_name.data = current_user.details[-1].first_name
-            form.last_name.data = current_user.details[-1].last_name
+            form.first_name.data = current_user.first_name
+            form.last_name.data = current_user.last_name
         except:
             pass
 
-        form.username.data = current_user.username
         form.email.data = current_user.email
     image_url = url_for(
         "static", filename="profile_images/" + current_user.profile_image
@@ -112,9 +109,9 @@ def account():
 def reset_password():
     form = ResetPasswordForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            send_email(user)
+        manager = Manager.query.filter_by(email=form.email.data).first()
+        if manager:
+            send_email(manager)
             flash("Reset request is sent. Check your mail", category="success")
             return redirect(url_for("users.login"))
     return render_template(
@@ -124,8 +121,8 @@ def reset_password():
 
 @users.route("/reset_password/<token>", methods=["GET", "POST"])
 def reset_token(token):
-    user = User.verify_token(token)
-    if user is None:
+    manager = Manager.verify_token(token)
+    if manager is None:
         flash("That token is invalid or expired. Please try again", "warning")
         redirect(url_for("users.reset_password"))
     form = ChangePasswordForm()
@@ -133,7 +130,7 @@ def reset_token(token):
         encrypted_password = bcrypt.generate_password_hash(
             form.new_password.data
         ).decode("utf-8")
-        user.password = encrypted_password
+        manager.password = encrypted_password
         db.session.commit()
         flash("Password has been changed successfully. Please login", "success")
         return redirect(url_for("users.login"))

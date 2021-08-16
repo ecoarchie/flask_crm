@@ -1,13 +1,11 @@
 from my_flask.errors.handlers import error_404
-from dotenv import load_dotenv
+
 from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
 from my_flask.config import Config
-
-load_dotenv()
 
 
 db = SQLAlchemy()

@@ -5,8 +5,11 @@ from wtforms.validators import DataRequired, Length, EqualTo, Email
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField(
-        label="Username", validators=[DataRequired(), Length(min=3, max=20)]
+    first_name = StringField(
+        label="First name", validators=[DataRequired(), Length(min=3, max=20)]
+    )
+    last_name = StringField(
+        label="Last name", validators=[DataRequired(), Length(min=3, max=20)]
     )
     email = StringField(label="Email", validators=[DataRequired(), Email()])
     password = PasswordField(
@@ -47,9 +50,6 @@ class AccountUpdateForm(FlaskForm):
     )
     last_name = StringField(
         label="Last Name", validators=[DataRequired(), Length(min=3, max=20)]
-    )
-    username = StringField(
-        label="Username", validators=[DataRequired(), Length(min=3, max=20)]
     )
     email = StringField(label="Email", validators=[DataRequired(), Email()])
     account_image = FileField(
