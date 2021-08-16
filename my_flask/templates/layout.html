@@ -27,26 +27,26 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <a class="nav-link active" aria-current="page" href="{{url_for('home')}}">Home</a>
+                    <a class="nav-link active" aria-current="page" href="{{url_for('main.home')}}">Home</a>
                     {%if current_user.is_authenticated%}
-                    <a class="nav-link active" aria-current="page" href="{{url_for('account')}}">Account</a>
+                    <a class="nav-link active" aria-current="page" href="{{url_for('users.account')}}">Account</a>
                     {%endif%}
-                    <a class="nav-link" href="{{url_for('projects')}}">Projects</a>
-                    <a class="nav-link" href="{{url_for('customers')}}">Customers</a>
+                    <a class="nav-link" href="{{url_for('projects.projects_page')}}">Projects</a>
+                    <a class="nav-link" href="{{url_for('customers.customers_page')}}">Customers</a>
                 </div>
             </div>
         </div>
         <ul class="navbar-nav justify-content-end">
             {%if current_user.is_authenticated%}
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{{url_for('logout')}}">Logout</a>
+                <a class="nav-link active" aria-current="page" href="{{url_for('users.logout')}}">Logout</a>
             </li>
             {%else%}
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{{url_for('register')}}">SignUp</a>
+                <a class="nav-link active" aria-current="page" href="{{url_for('users.register')}}">SignUp</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{url_for('login')}}">Login</a>
+                <a class="nav-link" href="{{url_for('users.login')}}">Login</a>
             </li>
             {%endif%}
 
