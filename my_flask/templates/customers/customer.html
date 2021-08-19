@@ -1,0 +1,180 @@
+{% extends "layout.html" %}
+
+{% block contentA %}
+<div class="container">
+    <!-- navigation tabs-->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="emails-tab" data-bs-toggle="tab" data-bs-target="#emails" type="button"
+                role="tab" aria-controls="emails" aria-selected="true">Emails</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button"
+                role="tab" aria-controls="comments" aria-selected="true">Comments</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="calllogs-tab" data-bs-toggle="tab" data-bs-target="#calllogs" type="button"
+                role="tab" aria-controls="calllogs" aria-selected="true">Call logs</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" type="button"
+                role="tab" aria-controls="files" aria-selected="false">Files</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="meetingnotes-tab" data-bs-toggle="tab" data-bs-target="#meetingnotes"
+                type="button" role="tab" aria-controls="meetingnotes" aria-selected="false">Meeting notes</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button"
+                role="tab" aria-controls="tasks" aria-selected="false">Tasks</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button"
+                role="tab" aria-controls="details" aria-selected="true">General Info</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button"
+                role="tab" aria-controls="projects" aria-selected="false">Projects</button>
+        </li>
+
+    </ul>
+    <div class="row mt-2 ms-2">
+        <div class="col-md-6">
+            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{url_for('customers.customers_page')}}">Customers</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{customer.first_name}}
+                        {{customer.last_name}} | {{customer.email}}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <!--Tabs content-->
+    <div class="tab-content" id="myTabContent">
+
+        <!-- email tab -->
+        <div class="tab-pane fade" id="emails" role="tabpanel" aria-labelledby="emails-tab">...</div>
+        <!-- end email tab -->
+
+        <!-- comments tab -->
+        <div class="tab-pane fade" id="comments" role="tabpanel" aria-labelledby="comments-tab">
+
+            {% for comment in comments%}
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="card shadow mt-2">
+                        <div class="row g-0">
+                            <div class="card-header col-6">{{comment.author.first_name}} {{comment.author.last_name}}
+                            </div>
+                            <div class="card-header col-6 text-end">{{comment.create_date}}</div>
+                            <div class="card-body">
+                                <p class="card-text">{{comment.note}}</p>
+                                <a href="#offcanvasNoteUpdate-{{comment.id}}" class="btn btn-primary"
+                                    data-bs-toggle="offcanvas" role="button" aria-controls="offcanvasNoteUpdate">Update
+                                    {{comment.note_type}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- offcanvas with note editing settings -->
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNoteUpdate-{{comment.id}}"
+                aria-labelledby="offcanvasNoteUpdateLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNoteUpdateLabel">Update comment</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <div>
+                        {{comment.note}}
+                    </div>
+                    <div class="edit_button mt-3">
+                        <button class="btn btn-primary" type="button" id="UpdateButton" data-bs-dismiss="offcanvas">
+                            Save and close
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <!-- end commets tab -->
+
+        <!-- call logs tab -->
+        <div class="tab-pane fade" id="calllogs" role="tabpanel" aria-labelledby="calllogs-tab">...</div>
+        <!-- end call logs tab -->
+
+        <!-- meeting notes tab -->
+        <div class="tab-pane fade" id="meetingnotes" role="tabpanel" aria-labelledby="meetingnotes-tab">...</div>
+        <!-- end meeting notes tab -->
+
+        <!-- tasks tab -->
+        <div class="tab-pane fade" id="tasks" role="tabpanel" aria-labelledby="tasks-tab">...</div>
+        <!-- end tasks tab -->
+
+        <!-- customers details tab -->
+        <div class="tab-pane fade" id="details" role="tabpanel" aria-labelledby="details-tab">
+            <div class="container">
+                <div class="col-2">
+                    {{ customer.first_name }}
+                </div>
+                <div class="col-2">{{ customer.last_name }}</div>
+                <div class="col-2">{{ customer.company }}</div>
+                <div class="col-2">{{ customer.email }}</div>
+                <div class="col-2">{{ customer.status }}</div>
+                <div class="col-2">{{ customer.date_created.strftime('%d-%m-%Y') }}</div>
+
+                {% if customer.manager == current_user %}
+
+                <div>
+                    <a class="btn btn-warning btn-sm mt-1 mb-1"
+                        href="{{url_for('customers.update_customer', customer_id = customer.id)}}">Update</a>
+                    <button class="btn btn-danger btn-sm m-1" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal">Delete</button>
+                    <!-- Modal -->
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Delete Customer</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>The customer will be deleted. Are you sure?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                    <form action="{{ url_for('customers.delete_customer', customer_id = customer.id) }}"
+                                        method="POST">
+                                        <input class="btn btn-danger" type="submit" value="Yes">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end modal -->
+                </div>
+
+            </div>
+            {% endif %}
+        </div>
+        <!-- end customers details tab -->
+
+        <!-- projects tab -->
+        <div class="tab-pane fade" id="projects" role="tabpanel" aria-labelledby="projects-tab">...</div>
+        <!-- end projects tab -->
+
+        <!-- documents tab -->
+        <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">...</div>
+        <!-- end documents tab -->
+    </div>
+</div>
+
+
+
+{% endblock %}

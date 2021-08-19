@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block contentA %}
+
+<div class="container-lg text-center">
+    <div class="row">
+        <div class="col-2">First name</div>
+        <div class="col-2">Last name</div>
+        <div class="col-2">Company</div>
+        <div class="col-2">Email</div>
+        <div class="col-2">Status</div>
+        <div class="col-2">Created</div>
+    </div>
+    {% for customer in customers.items %}
+    <div class="row">
+        <a class="row clockable" href="{{url_for('customers.customer_info', customer_id=customer.id)}}">
+            <div class="col-2">{{ customer.first_name }}</div>
+            <div class="col-2">{{ customer.last_name }}</div>
+            <div class="col-2">{{ customer.company }}</div>
+            <div class="col-2">{{ customer.email }}</div>
+            <div class="col-2">{{ customer.status }}</div>
+            <div class="col-2">{{ customer.date_created.strftime('%d-%m-%Y') }}</div>
+        </a>
+    </div>
+    {% endfor %}
+
+    {% for page_num in customers.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if page_num %}
+    {% if customers.page == page_num %}
+
+    <a class="btn btn-info mb-4" href="{{ url_for('customers.customers_page', page=page_num) }}">{{ page_num
+        }}</a>
+    {% else %}
+    <a class="btn btn-outline-info mb-4" href="{{ url_for('customers.customers_page', page=page_num) }}">{{ page_num
+        }}</a>
+    {% endif %}
+    {% else %}
+    ...
+    {% endif %}
+    {% endfor %}
+</div>
+
+
+
+{% endblock %}

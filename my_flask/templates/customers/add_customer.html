@@ -5,7 +5,7 @@
     <form action="" method="POST">
         {{form.hidden_tag()}}
         <fieldset>
-            <legend class="border-bottom mb-4">New Customer</legend>
+            <legend class="border-bottom mb-4">{{legend}}</legend>
             <div class="form-group">
                 {{form.first_name.label(class="form-control-label")}}
                 {% if form.first_name.errors %}
@@ -37,7 +37,7 @@
                 {% endfor %}
                 {% else %}
                 {{form.status(class="form-control form-control-lg", list="datalistOptions", id="exampleDataList",
-                placeholder="Type to search...")}}
+                placeholder="Type to select...")}}
                 <datalist id="datalistOptions">
                     {% for status in statuses%}
                     <option value={{ status }}>
@@ -70,7 +70,7 @@
             </div>
         </fieldset>
         <div class="form-group mt-4">
-            {{form.submit(class="btn btn-primary")}}
+            {{form.submit(class="btn btn-primary", value=button_value)}}
         </div>
     </form>
 </div>
